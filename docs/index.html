@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔥 AI 热点资讯</title>
+<style>
+  :root {
+    --bg: #f1f5f9;
+    --card-bg: #ffffff;
+    --text: #0f172a;
+    --text-secondary: #64748b;
+    --text-tertiary: #94a3b8;
+    --border: #e2e8f0;
+    --accent: #3b82f6;
+    --header-bg: rgba(255,255,255,.9);
+    --hover-bg: #f8fafc;
+    --shadow: 0 1px 3px rgba(0,0,0,.06);
+  }
+  [data-theme="dark"] {
+    --bg: #0f172a;
+    --card-bg: #1e293b;
+    --text: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-tertiary: #64748b;
+    --border: #334155;
+    --accent: #60a5fa;
+    --header-bg: rgba(15,23,42,.9);
+    --hover-bg: #1e293b;
+    --shadow: 0 1px 3px rgba(0,0,0,.2);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", "PingFang SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    transition: background .3s, color .3s;
+  }
+  a { color: inherit; text-decoration: none; }
+  a:hover { color: var(--accent); }
+
+  /* ── Header ── */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+  }
+  .header-inner {
+    max-width: 1440px; margin: 0 auto; padding: 0 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .logo span { background: linear-gradient(135deg,#3b82f6,#8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .header-right { display: flex; align-items: center; gap: 16px; font-size: 13px; color: var(--text-secondary); }
+  .theme-btn {
+    background: var(--border); border: none; color: var(--text);
+    width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 15px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s;
+  }
+  .theme-btn:hover { opacity: .8; }
+
+  /* ── 3-Column Grid ── */
+  .grid {
+    max-width: 1440px; margin: 0 auto; padding: 20px;
+    display: grid;
+    grid-template-columns: 300px 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  .col { min-width: 0; }
+
+  /* ── Section Headers ── */
+  .section-title {
+    font-size: 15px; font-weight: 700; margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+    padding-bottom: 8px; border-bottom: 2px solid var(--border);
+  }
+
+  /* ── Left: Hotlist ── */
+  .hotlist-card {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px; margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .hotlist-header {
+    font-size: 14px; font-weight: 700; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hotlist-dot {
+    width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0;
+  }
+  .hotlist-item {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 6px 0; border-bottom: 1px solid var(--border);
+    font-size: 13px; line-height: 1.5;
+  }
+  .hotlist-item:last-child { border-bottom: none; }
+  .hotlist-item:hover { color: var(--accent); }
+  .hotlist-rank {
+    flex-shrink: 0; width: 22px; text-align: center;
+    font-size: 12px; font-weight: 700; color: var(--text-tertiary);
+  }
+  .hotlist-rank.top3 { color: var(--accent); }
+  .hotlist-item a { flex: 1; min-width: 0; }
+  .hotlist-item a:hover { color: var(--accent); }
+
+  .hotlist-empty {
+    font-size: 13px; color: var(--text-tertiary); text-align: center; padding: 20px 0;
+  }
+
+  /* ── Middle: Company Cards ── */
+  .company-card {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px; margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .company-header {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 14px; font-weight: 700; margin-bottom: 10px;
+    padding-bottom: 10px; border-bottom: 2px solid;
+  }
+  .company-item {
+    padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+  }
+  .company-item:last-child { border-bottom: none; }
+  .company-item-title { font-weight: 500; display: block; line-height: 1.5; }
+  .company-item-title:hover { color: var(--accent); }
+  .company-item-meta { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; display: flex; gap: 8px; }
+  .company-empty {
+    font-size: 13px; color: var(--text-tertiary); text-align: center; padding: 12px 0;
+  }
+
+  /* ── Right: Media Feed ── */
+  .media-item {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; margin-bottom: 10px;
+    box-shadow: var(--shadow);
+    transition: border-color .2s;
+  }
+  .media-item:hover { border-color: var(--accent); }
+  .media-meta {
+    display: flex; align-items: center; gap: 6px; font-size: 12px;
+    color: var(--text-tertiary); margin-bottom: 4px; flex-wrap: wrap;
+  }
+  .media-source {
+    font-weight: 600; color: var(--text-secondary);
+  }
+  .media-cat {
+    font-size: 10px; padding: 1px 6px; border-radius: 999px; font-weight: 500;
+  }
+  .media-title {
+    font-size: 14px; font-weight: 600; line-height: 1.5;
+  }
+  .media-title a:hover { color: var(--accent); }
+
+  /* ── Responsive ── */
+  @media (max-width: 1100px) {
+    .grid { grid-template-columns: 1fr 1fr; }
+    .col-left { display: none; }
+    .mobile-toggle { display: flex !important; }
+  }
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: 1fr; padding: 12px; }
+    .col-left { display: none; }
+    .mobile-toggle { display: flex !important; }
+  }
+
+  /* ── Mobile toggle ── */
+  .mobile-toggle {
+    display: none !important;
+    align-items: center; gap: 4px;
+    font-size: 13px; color: var(--accent); cursor: pointer;
+    background: none; border: none; padding: 4px 8px;
+  }
+  .mobile-toggle:hover { opacity: .8; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="logo">🔥 <span>AI 热点资讯</span></div>
+      <button class="mobile-toggle" onclick="toggleLeft()">📋 热搜</button>
+    </div>
+    <div class="header-right">
+      <span>2026-05-15 17:27</span>
+      <span>共 197 条</span>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+</header>
+
+<div class="grid">
+  <!-- ═══ 左栏: 热搜榜单 ═══ -->
+  <div class="col col-left" id="leftCol">
+    <div class="section-title">🔥 热搜榜单</div>
+    <div class="hotlist-card"><div class="hotlist-header"><span class="hotlist-dot" style="background:#e6162d"></span>微博 热搜</div><div class="hotlist-empty">暂无相关科技热搜</div></div>
+<div class="hotlist-card"><div class="hotlist-header"><span class="hotlist-dot" style="background:#0066ff"></span>知乎 热搜</div><div class="hotlist-item"><span class="hotlist-rank">6</span><a href="https://www.zhihu.com/question/2018783635805860978" target="_blank" rel="noopener">有没有人试过把全世界已有的佛经喂给 AI 看看最后能不能生成一个赛博在世佛祖?</a></div><div class="hotlist-item"><span class="hotlist-rank">29</span><a href="https://www.zhihu.com/question/2037259013860087102" target="_blank" rel="noopener">如果黄仁勋愿意，凭借英伟达目前造算力卡的技术，最高可以造出什么水平的游戏显卡？</a></div></div>
+<div class="hotlist-card"><div class="hotlist-header"><span class="hotlist-dot" style="background:#4e6ef2"></span>百度 热搜</div><div class="hotlist-empty">暂无相关科技热搜</div></div>
+<div class="hotlist-card"><div class="hotlist-header"><span class="hotlist-dot" style="background:#333333"></span>抖音 热搜</div><div class="hotlist-empty">暂无相关科技热搜</div></div>
+<div class="hotlist-card"><div class="hotlist-header"><span class="hotlist-dot" style="background:#fb7299"></span>B站 热搜</div><div class="hotlist-item"><span class="hotlist-rank top3">2</span><a href="https://www.bilibili.com/video/BV1fM5R6xEDQ" target="_blank" rel="noopener">我伟大的甲方，又来指导技术教学了，哈啊哈哈哈，本视频由libtv赞助算力 #程序员 #打工人 #职场 #LibTV制作 #哩布哩布</a></div><div class="hotlist-item"><span class="hotlist-rank">78</span><a href="https://www.bilibili.com/video/BV1RC5A66EaC" target="_blank" rel="noopener">你就说200g的安装包，吊不吊吧？？？？#程序员 #甲方 #打工人 #职场 #sekoai</a></div></div>
+<div class="hotlist-card"><div class="hotlist-header"><span class="hotlist-dot" style="background:#f42b02"></span>头条 热搜</div><div class="hotlist-item"><span class="hotlist-rank">11</span><a href="https://www.toutiao.com/trending/7639594791072628786/" target="_blank" rel="noopener">腾讯辟谣“AI一号位即将离职”</a></div><div class="hotlist-item"><span class="hotlist-rank">48</span><a href="https://www.toutiao.com/trending/7639709816608276534/" target="_blank" rel="noopener">外交部回应中美人工智能合作</a></div></div>
+<div class="hotlist-card"><div class="hotlist-header"><span class="hotlist-dot" style="background:#e60012"></span>澎湃 热搜</div><div class="hotlist-empty">暂无相关科技热搜</div></div>
+<div class="hotlist-card"><div class="hotlist-header"><span class="hotlist-dot" style="background:#1d8c9e"></span>36氪 热搜</div><div class="hotlist-item"><span class="hotlist-rank">6</span><a href="https://36kr.com/p/3810308239465986?f=rss" target="_blank" rel="noopener">36氪联合PureblueAI清蓝发布「2026消费品牌AI推荐力名册」丨AI时代，品牌如何抢占「推荐力」新战场？</a></div><div class="hotlist-item"><span class="hotlist-rank">11</span><a href="https://36kr.com/newsflashes/3810287851249158?f=rss" target="_blank" rel="noopener">OpenAI首席财务官：公司或将筹集更多资金，未来可能考虑通过公开市场融资</a></div><div class="hotlist-item"><span class="hotlist-rank">12</span><a href="https://36kr.com/newsflashes/3810285961436676?f=rss" target="_blank" rel="noopener">OpenAI推出Codex移动端 iOS和安卓全套餐用户可用</a></div><div class="hotlist-item"><span class="hotlist-rank">13</span><a href="https://36kr.com/newsflashes/3810290369273604?f=rss" target="_blank" rel="noopener">天猫进军家装市场，推出行业首个AI家装操作平台“天猫设计家”</a></div><div class="hotlist-item"><span class="hotlist-rank">27</span><a href="https://36kr.com/p/3809911566704388?f=rss" target="_blank" rel="noopener">2026年上半年最火赛道：具身智能行业前4月融资超200笔，总规模超550亿元</a></div></div>
+<div class="hotlist-card"><div class="hotlist-header"><span class="hotlist-dot" style="background:#e2ab00"></span>V2EX 热搜</div><div class="hotlist-item"><span class="hotlist-rank">7</span><a href="https://www.v2ex.com/t/1212851" target="_blank" rel="noopener">一个真正一目了然的自建 Codex 中转站</a></div><div class="hotlist-item"><span class="hotlist-rank">8</span><a href="https://www.v2ex.com/t/1212788" target="_blank" rel="noopener">[发码] 想躺着吸 AI, 试了一圈工具都不爽, 自己搓了个</a></div></div>
+  </div>
+
+  <!-- ═══ 中栏: 公司卡片 ═══ -->
+  <div class="col col-middle">
+    <div class="section-title">🏢 AI 公司动态</div>
+    <div class="company-card"><div class="company-header" style="border-bottom-color:#10b98140;color:#10b981">🤖 OpenAI</div><div class="company-item"><a class="company-item-title" href="https://36kr.com/newsflashes/3810287851249158?f=rss" target="_blank" rel="noopener">OpenAI首席财务官：公司或将筹集更多资金，未来可能考虑通过公开市场融资</a><div class="company-item-meta"><span>36氪</span><span>53分钟前</span></div></div><div class="company-item"><a class="company-item-title" href="https://36kr.com/newsflashes/3810285961436676?f=rss" target="_blank" rel="noopener">OpenAI推出Codex移动端 iOS和安卓全套餐用户可用</a><div class="company-item-meta"><span>36氪</span><span>57分钟前</span></div></div><div class="company-item"><a class="company-item-title" href="https://techcrunch.com/2026/05/14/what-the-jury-will-actually-decide-in-the-case-of-elon-musk-vs-sam-altman/" target="_blank" rel="noopener">What the jury will actually decide in the case of Elon Musk vs. Sam Altman</a><div class="company-item-meta"><span>TechCrunch AI</span><span>10小时前</span></div></div><div class="company-item"><a class="company-item-title" href="https://techcrunch.com/2026/05/14/openai-says-codex-is-coming-to-your-phone/" target="_blank" rel="noopener">OpenAI says Codex is coming to your phone</a><div class="company-item-meta"><span>TechCrunch AI</span><span>12小时前</span></div></div><div class="company-item"><a class="company-item-title" href="https://openai.com/index/sea-david-chen" target="_blank" rel="noopener">Sea's View on the Future of Agentic Software Development with Codex</a><div class="company-item-meta"><span>OpenAI</span><span>12小时前</span></div></div><div class="company-item"><a class="company-item-title" href="https://www.theverge.com/ai-artificial-intelligence/930763/openai-codex-chatgpt-ios-android-app-preview" target="_blank" rel="noopener">OpenAI’s Codex is now in the ChatGPT mobile app</a><div class="company-item-meta"><span>The Verge AI</span><span>13小时前</span></div></div><div class="company-item"><a class="company-item-title" href="https://techcrunch.com/2026/05/14/openai-is-reportedly-preparing-legal-action-against-apple-it-wouldnt-be-the-first-partner-to-feel-burned/" target="_blank" rel="noopener">OpenAI is reportedly preparing legal action against Apple; it wouldn’t be the first partner to feel burned</a><div class="company-item-meta"><span>TechCrunch AI</span><span>14小时前</span></div></div><div class="company-item"><a class="company-item-title" href="https://www.theverge.com/tech/917225/sam-altman-elon-musk-openai-lawsuit" target="_blank" rel="noopener">Live updates from Elon Musk and Sam Altman’s court battle over the future of OpenAI</a><div class="company-item-meta"><span>The Verge AI</span><span>17小时前</span></div></div></div>
+<div class="company-card"><div class="company-header" style="border-bottom-color:#8b5cf640;color:#8b5cf6">🟣 Anthropic</div><div class="company-item"><a class="company-item-title" href="https://techcrunch.com/2026/05/14/clawdmeter-turns-your-claude-code-usage-stats-into-a-tiny-desktop-dashboard/" target="_blank" rel="noopener">Clawdmeter turns your Claude Code usage stats into a tiny desktop dashboard</a><div class="company-item-meta"><span>TechCrunch AI</span><span>14小时前</span></div></div><div class="company-item"><a class="company-item-title" href="https://www.theverge.com/tech/930447/microsoft-claude-code-discontinued-notepad" target="_blank" rel="noopener">Microsoft starts canceling Claude Code licenses</a><div class="company-item-meta"><span>The Verge AI</span><span>14小时前</span></div></div><div class="company-item"><a class="company-item-title" href="https://techcrunch.com/2026/05/13/clios-500m-milestone-arrives-just-as-anthropic-ups-the-ante/" target="_blank" rel="noopener">Clio’s $500M milestone arrives just as Anthropic ups the ante</a><div class="company-item-meta"><span>TechCrunch AI</span><span>1天前</span></div></div><div class="company-item"><a class="company-item-title" href="https://techcrunch.com/2026/05/13/anthropics-cat-wu-says-that-in-the-future-ai-will-anticipate-your-needs-before-you-know-what-they-are/" target="_blank" rel="noopener">Anthropic’s Cat Wu says that, in the future, AI will anticipate your needs before you know what they are</a><div class="company-item-meta"><span>TechCrunch AI</span><span>1天前</span></div></div><div class="company-item"><a class="company-item-title" href="https://arstechnica.com/ai/2026/05/anthropic-blames-dystopian-sci-fi-for-training-ai-models-to-act-evil/" target="_blank" rel="noopener">Anthropic blames dystopian sci-fi for training AI models to act “evil”</a><div class="company-item-meta"><span>Ars Technica AI</span><span>1天前</span></div></div><div class="company-item"><a class="company-item-title" href="https://techcrunch.com/2026/05/13/anthropic-courts-a-new-kind-of-customer-small-business-owners/" target="_blank" rel="noopener">Anthropic courts a new kind of customer: small business owners</a><div class="company-item-meta"><span>TechCrunch AI</span><span>1天前</span></div></div><div class="company-item"><a class="company-item-title" href="https://simonwillison.net/2026/May/8/unreasonable-effectiveness-of-html/#atom-everything" target="_blank" rel="noopener">Using Claude Code: The Unreasonable Effectiveness of HTML</a><div class="company-item-meta"><span>Simon Willison</span><span>6天前</span></div></div><div class="company-item"><a class="company-item-title" href="https://www.interconnects.ai/p/claude-mythos-and-misguided-open" target="_blank" rel="noopener">Claude Mythos and misguided open-weight fearmongering</a><div class="company-item-meta"><span>Interconnects</span><span>04-09</span></div></div></div>
+<div class="company-card"><div class="company-header" style="border-bottom-color:#3b82f640;color:#3b82f6">🔵 Google</div><div class="company-item"><a class="company-item-title" href="https://36kr.com/newsflashes/3810334702771974?f=rss" target="_blank" rel="noopener">AI认知型资讯平台立刻资讯与Google Cloud达成合作</a><div class="company-item-meta"><span>36氪</span><span>8分钟前</span></div></div><div class="company-item"><a class="company-item-title" href="https://arstechnica.com/gadgets/2026/05/googles-android-powered-laptops-are-called-googlebooks-and-theyre-coming-this-year/" target="_blank" rel="noopener">Google's Android-powered laptops are called Googlebooks, and they're coming this year</a><div class="company-item-meta"><span>Ars Technica AI</span><span>2天前</span></div></div><div class="company-item"><a class="company-item-title" href="https://arstechnica.com/google/2026/05/google-will-put-more-links-to-websites-in-ai-overviews/" target="_blank" rel="noopener">Course correction: Google to link more sources in AI Overviews</a><div class="company-item-meta"><span>Ars Technica AI</span><span>6天前</span></div></div><div class="company-item"><a class="company-item-title" href="https://simonwillison.net/2026/May/7/llm-gemini/#atom-everything" target="_blank" rel="noopener">llm-gemini 0.31</a><div class="company-item-meta"><span>Simon Willison</span><span>7天前</span></div></div><div class="company-item"><a class="company-item-title" href="https://arstechnica.com/gadgets/2026/05/google-unveils-screenless-fitbit-air-and-google-health-app-to-replace-fitbit/" target="_blank" rel="noopener">Google unveils screenless Fitbit Air and Google Health app to replace Fitbit</a><div class="company-item-meta"><span>Ars Technica AI</span><span>7天前</span></div></div><div class="company-item"><a class="company-item-title" href="https://importai.substack.com/p/import-ai-451-political-superintelligence" target="_blank" rel="noopener">Import AI 451: Political superintelligence; Google's society of minds, and a robot drummer</a><div class="company-item-meta"><span>Import AI</span><span>03-30</span></div></div><div class="company-item"><a class="company-item-title" href="https://venturebeat.com/technology/salesforce-rolls-out-new-slackbot-ai-agent-as-it-battles-microsoft-and" target="_blank" rel="noopener">Salesforce rolls out new Slackbot AI agent as it battles Microsoft and Google in workplace AI</a><div class="company-item-meta"><span>VentureBeat AI</span><span>01-13</span></div></div></div>
+<div class="company-card"><div class="company-header" style="border-bottom-color:#06b6d440;color:#06b6d4">🔮 Meta</div><div class="company-item"><a class="company-item-title" href="https://www.marktechpost.com/2026/05/14/poetiqs-meta-system-automatically-builds-a-model-agnostic-harness-that-improved-every-llm-tested-on-livecodebench-pro-without-fine-tuning/" target="_blank" rel="noopener">Poetiq’s Meta-System Automatically Builds a Model-Agnostic Harness That Improved Every LLM Tested on LiveCodeBench Pro Without Fine-Tuning</a><div class="company-item-meta"><span>MarkTechPost</span><span>5小时前</span></div></div><div class="company-item"><a class="company-item-title" href="https://techcrunch.com/2026/05/13/who-decides-what-ai-tells-you-campbell-brown-once-metas-news-chief-has-thoughts/" target="_blank" rel="noopener">Who decides what AI tells you? Campbell Brown, once Meta’s news chief, has thoughts</a><div class="company-item-meta"><span>TechCrunch AI</span><span>1天前</span></div></div><div class="company-item"><a class="company-item-title" href="https://www.theverge.com/tech/929791/meta-ai-incognito-chats" target="_blank" rel="noopener">Mark Zuckerberg announces &amp;#8216;completely private&amp;#8217; encrypted Meta AI chat</a><div class="company-item-meta"><span>The Verge AI</span><span>1天前</span></div></div></div>
+<div class="company-card"><div class="company-header" style="border-bottom-color:#00a4ef40;color:#00a4ef">🟦 Microsoft</div><div class="company-item"><a class="company-item-title" href="https://www.theverge.com/tech/930188/microsoft-edge-copilot-ai-tabs" target="_blank" rel="noopener">Microsoft&amp;#8217;s Edge Copilot update uses AI to pull information from across your tabs</a><div class="company-item-meta"><span>The Verge AI</span><span>1天前</span></div></div></div>
+<div class="company-card"><div class="company-header" style="border-bottom-color:#64748b40;color:#64748b">🍎 Apple</div><div class="company-item"><a class="company-item-title" href="https://arstechnica.com/tech-policy/2026/05/desperate-trump-taps-tim-apple-jensen-huang-elon-musk-to-attend-xi-summit/" target="_blank" rel="noopener">Desperate Trump taps &quot;Tim Apple,&quot; Jensen Huang, Elon Musk to attend Xi summit</a><div class="company-item-meta"><span>Ars Technica AI</span><span>22小时前</span></div></div></div>
+<div class="company-card"><div class="company-header" style="border-bottom-color:#f9731640;color:#f97316">⚡ xAI</div><div class="company-item"><a class="company-item-title" href="https://techcrunch.com/2026/05/14/elon-musks-spacexai-has-been-bleeding-staff-since-its-merger/" target="_blank" rel="noopener">Elon Musk’s SpaceXAI has been bleeding staff since its merger</a><div class="company-item-meta"><span>TechCrunch AI</span><span>11小时前</span></div></div><div class="company-item"><a class="company-item-title" href="https://www.theverge.com/ai-artificial-intelligence/930893/elon-musk-sam-altman-trial-ai-safety-jackass-statue" target="_blank" rel="noopener">Behold, the Elon Musk jackass trophy</a><div class="company-item-meta"><span>The Verge AI</span><span>12小时前</span></div></div><div class="company-item"><a class="company-item-title" href="https://techcrunch.com/2026/05/13/musks-xai-is-running-nearly-50-gas-turbines-unchecked-at-its-mississippi-data-center/" target="_blank" rel="noopener">Musk’s xAI is running nearly 50 gas turbines unchecked at its Mississippi data center</a><div class="company-item-meta"><span>TechCrunch AI</span><span>1天前</span></div></div></div>
+<div class="company-card"><div class="company-header" style="border-bottom-color:#f9731640;color:#f97316">☁️ AWS</div><div class="company-item"><a class="company-item-title" href="https://importai.substack.com/p/import-ai-452-scaling-laws-for-cyberwar" target="_blank" rel="noopener">Import AI 452: Scaling laws for cyberwar; rising tides of AI automation; and a puzzle over gDP forecasting</a><div class="company-item-meta"><span>Import AI</span><span>04-06</span></div></div><div class="company-item"><a class="company-item-title" href="https://venturebeat.com/infrastructure/railway-secures-usd100-million-to-challenge-aws-with-ai-native-cloud" target="_blank" rel="noopener">Railway secures $100 million to challenge AWS with AI-native cloud infrastructure</a><div class="company-item-meta"><span>VentureBeat AI</span><span>01-22</span></div></div></div>
+<div class="company-card"><div class="company-header" style="border-bottom-color:#1e80ff40;color:#1e80ff">🎵 字节跳动</div><div class="company-item"><a class="company-item-title" href="https://importai.substack.com/p/import-ai-448-ai-r-and-d-bytedances" target="_blank" rel="noopener">Import AI 448: AI R&amp;D; Bytedance's CUDA-writing agent; on-device satellite AI</a><div class="company-item-meta"><span>Import AI</span><span>03-09</span></div></div></div>
+<div class="company-card"><div class="company-header" style="border-bottom-color:#ff6a0040;color:#ff6a00">🛒 阿里巴巴</div><div class="company-item"><a class="company-item-title" href="https://36kr.com/p/3807527591058948?f=rss" target="_blank" rel="noopener">阿里巴巴等来收获期，外卖大战已无大波澜</a><div class="company-item-meta"><span>36氪</span><span>8小时前</span></div></div></div>
+  </div>
+
+  <!-- ═══ 右栏: 媒体混排 ═══ -->
+  <div class="col col-right">
+    <div class="section-title">📰 媒体速览</div>
+    <div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>49秒前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810336584916484?f=rss" target="_blank" rel="noopener">宏达电子：参股公司江苏展芯创业板IPO申请获深交所审议通过</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>5分钟前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810336034512389?f=rss" target="_blank" rel="noopener">南方航空：2026年4月，集团客运运力投入同比上升3.68%</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>5分钟前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810343326604808?f=rss" target="_blank" rel="noopener">北京证监局对国都证券采取监管谈话</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>8分钟前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810334702771974?f=rss" target="_blank" rel="noopener">AI认知型资讯平台立刻资讯与Google Cloud达成合作</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>14分钟前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810325150735873?f=rss" target="_blank" rel="noopener">中国东航：拟以5亿至10亿元回购股份用于减少公司注册资本</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>18分钟前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810330947149573?f=rss" target="_blank" rel="noopener">国家外汇管理局：一季度，我国经常账户顺差12821亿元</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>18分钟前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810320244137729?f=rss" target="_blank" rel="noopener">潞安环能：4月商品煤销量445万吨，同比下降1.33%</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>22分钟前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810311781097225?f=rss" target="_blank" rel="noopener">*ST东智：控股股东终止控制权变更事项</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>28分钟前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810314391100931?f=rss" target="_blank" rel="noopener">全新理想L9 上市，售价45.98万起</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>31分钟前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810310203760136?f=rss" target="_blank" rel="noopener">乘联分会：4月份皮卡市场销售5.9万辆，同比增长4.2%</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>35分钟前</span></div><div class="media-title"><a href="https://36kr.com/p/3810308239465986?f=rss" target="_blank" rel="noopener">36氪联合PureblueAI清蓝发布「2026消费品牌AI推荐力名册」丨AI时代，品牌如何抢占「推荐力」新战场？</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>35分钟前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810302518386185?f=rss" target="_blank" rel="noopener">香港经济今年第一季度强势扩张</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>39分钟前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810299362516484?f=rss" target="_blank" rel="noopener">久盛电气：拟定增募资不超4.27亿元</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>45分钟前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810298780638727?f=rss" target="_blank" rel="noopener">海南机场：2026年4月旅客吞吐量419.65万人次，同比增长4.77%</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>49分钟前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810289756790273?f=rss" target="_blank" rel="noopener">深交所对*ST荣控下发监管函</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>53分钟前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810287851249158?f=rss" target="_blank" rel="noopener">OpenAI首席财务官：公司或将筹集更多资金，未来可能考虑通过公开市场融资</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>57分钟前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810285961436676?f=rss" target="_blank" rel="noopener">OpenAI推出Codex移动端 iOS和安卓全套餐用户可用</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>59分钟前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810290369273604?f=rss" target="_blank" rel="noopener">天猫进军家装市场，推出行业首个AI家装操作平台“天猫设计家”</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>1小时前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810283769355780?f=rss" target="_blank" rel="noopener">澳门：一季度GDP修订数值为1075.6亿澳门元，按年实质增长7.1%</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>1小时前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810289096761088?f=rss" target="_blank" rel="noopener">中国证监会发布《衍生品交易监督管理办法（试行）》</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">MarkTechPost</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>1小时前</span></div><div class="media-title"><a href="https://www.marktechpost.com/2026/05/15/best-ai-agents-for-software-development-ranked-a-benchmark-driven-look-at-the-current-field/" target="_blank" rel="noopener">Best AI Agents for Software Development Ranked: A Benchmark-Driven Look at the Current Field</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>1小时前</span></div><div class="media-title"><a href="https://36kr.com/newsflashes/3810285312843273?f=rss" target="_blank" rel="noopener">毅华新能源与维桢新材料联合研发MOFs-聚合物复合固态电池</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">MarkTechPost</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>2小时前</span></div><div class="media-title"><a href="https://www.marktechpost.com/2026/05/15/supertone-releases-supertonic-v3-on-device-text-to-speech-model-with-31-language-support-fewer-reading-failures-and-expression-tags/" target="_blank" rel="noopener">Supertone Releases Supertonic v3: On-Device Text-to-Speech Model with 31-Language Support, Fewer Reading Failures, and Expression Tags</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>2小时前</span></div><div class="media-title"><a href="https://36kr.com/p/3810091479293449?f=rss" target="_blank" rel="noopener">长安计划入股千里科技，千里智驾与奥迪推进合作｜36氪独家</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">MarkTechPost</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>3小时前</span></div><div class="media-title"><a href="https://www.marktechpost.com/2026/05/14/how-to-build-a-django-unfold-admin-dashboard-with-custom-models-filters-actions-and-kpis/" target="_blank" rel="noopener">How to Build a Django-Unfold Admin Dashboard with Custom Models, Filters, Actions, and KPIs</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.13848" target="_blank" rel="noopener">GraphBit: A Graph-based Agentic Framework for Non-Linear Agent Orchestration</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.13849" target="_blank" rel="noopener">Mixed Integer Goal Programming for Personalized Meal Optimization with User-Defined Serving Granularity</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.13850" target="_blank" rel="noopener">A Two-Dimensional Framework for AI Agent Design Patterns: Cognitive Function and Execution Topology</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.13851" target="_blank" rel="noopener">Invisible Orchestrators Suppress Protective Behavior and Dissociate Power-Holders: Safety Risks in Multi-Agent LLM Systems</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.13880" target="_blank" rel="noopener">PREPING: Building Agent Memory without Tasks</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14002" target="_blank" rel="noopener">PolitNuggets: Benchmarking Agentic Discovery of Long-Tail Political Facts</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14004" target="_blank" rel="noopener">Conditional Attribute Estimation with Autoregressive Sequence Models</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14033" target="_blank" rel="noopener">Sheaf-Theoretic Transport and Obstruction for Detecting Scientific Theory Shift in AI Agents</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14034" target="_blank" rel="noopener">From Descriptive to Prescriptive: Uncover the Social Value Alignment of LLM-based Agents</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14036" target="_blank" rel="noopener">Enhanced and Efficient Reasoning in Large Learning Models</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14038" target="_blank" rel="noopener">Model-Adaptive Tool Necessity Reveals the Knowing-Doing Gap in LLM Tool Use</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14048" target="_blank" rel="noopener">Network-Aware Bilinear Tokenization for Brain Functional Connectivity Representation Learning</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14049" target="_blank" rel="noopener">Bridging Legal Interpretation and Formal Logic: Faithfulness, Assumption, and the Future of AI Legal Reasoning</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14051" target="_blank" rel="noopener">SPIN: Structural LLM Planning via Iterative Navigation for Industrial Tasks</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14054" target="_blank" rel="noopener">Bad Seeing or Bad Thinking? Rewarding Perception for Vision-Language Reasoning</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14061" target="_blank" rel="noopener">MathAtlas: A Benchmark for Autoformalization in the Wild</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14062" target="_blank" rel="noopener">Know When To Fold 'Em: Token-Efficient LLM Synthetic Data Generation via Multi-Stage In-Flight Rejection</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14089" target="_blank" rel="noopener">SkillFlow: Flow-Driven Recursive Skill Evolution for Agentic Orchestration</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14102" target="_blank" rel="noopener">ChromaFlow: A Negative Ablation Study of Orchestration Overhead in Tool-Augmented Agent Evaluation</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14111" target="_blank" rel="noopener">Modeling Bounded Rationality in Drug Shortage Pharmacists Using Attention-Guided Dynamic Decomposition</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14133" target="_blank" rel="noopener">ClawForge: Generating Executable Interactive Benchmarks for Command-Line Agents</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14141" target="_blank" rel="noopener">Distribution-Aware Algorithm Design with LLM Agents</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14163" target="_blank" rel="noopener">Agentic Systems as Boosting Weak Reasoning Models</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14164" target="_blank" rel="noopener">Unsteady Metrics and Benchmarking Cultures of AI Model Builders</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14167" target="_blank" rel="noopener">The Evaluation Trap: Benchmark Design as Theoretical Commitment</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14175" target="_blank" rel="noopener">Grounded Continuation: A Linear-Time Runtime Verifier for LLM Conversations</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14205" target="_blank" rel="noopener">SimPersona: Learning Discrete Buyer Personas from Raw Clickstreams for Grounded E-Commerce Agents</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14211" target="_blank" rel="noopener">ASH: Agents that Self-Hone via Embodied Learning</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14212" target="_blank" rel="noopener">MetaAgent-X : Breaking the Ceiling of Automatic Multi-Agent Systems via End-to-End Reinforcement Learning</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">arXiv cs.AI</span><span class="media-cat" style="background:#8b5cf618;color:#8b5cf6">研究</span><span>5小时前</span></div><div class="media-title"><a href="https://arxiv.org/abs/2605.14215" target="_blank" rel="noopener">GenCircuit-RL: Reinforcement Learning from Hierarchical Verification for Genetic Circuit Design</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">MarkTechPost</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>5小时前</span></div><div class="media-title"><a href="https://www.marktechpost.com/2026/05/14/poetiqs-meta-system-automatically-builds-a-model-agnostic-harness-that-improved-every-llm-tested-on-livecodebench-pro-without-fine-tuning/" target="_blank" rel="noopener">Poetiq’s Meta-System Automatically Builds a Model-Agnostic Harness That Improved Every LLM Tested on LiveCodeBench Pro Without Fine-Tuning</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>6小时前</span></div><div class="media-title"><a href="https://36kr.com/p/3809936183860740?f=rss" target="_blank" rel="noopener">36氪首发｜航天发动机核心部件厂商获投，国内唯一具备核心部件一站式制造能力的民营企业</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>7小时前</span></div><div class="media-title"><a href="https://36kr.com/p/3800419059555584?f=rss" target="_blank" rel="noopener">挪瓦咖啡2025年营收7至8亿元，利润约为6千万元 | 独家</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>7小时前</span></div><div class="media-title"><a href="https://36kr.com/p/3809931035844359?f=rss" target="_blank" rel="noopener">麦记牛奶谢永亮：2025年是唯一窗口期，糖水赛道胜负已定｜厚雪专访</a></div></div>
+<div class="media-item"><div class="media-meta"><span class="media-source">36氪</span><span class="media-cat" style="background:#3b82f618;color:#3b82f6">行业</span><span>7小时前</span></div><div class="media-title"><a href="https://36kr.com/p/3809919654403587?f=rss" target="_blank" rel="noopener">36氪首发 | 前大疆核心成员做消费级CNC，获美团、昆仑资本、奇绩创坛投资近亿元</a></div></div>
+  </div>
+</div>
+
+<footer style="text-align:center;padding:20px;font-size:13px;color:var(--text-tertiary);border-top:1px solid var(--border);">
+  数据来源：AI 热点资讯 · 每天 06:00 / 12:00 更新 · Powered by GitHub Actions
+</footer>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const btn = document.getElementById('themeBtn');
+  if (html.getAttribute('data-theme') === 'dark') {
+    html.removeAttribute('data-theme');
+    btn.textContent = '🌙';
+    localStorage.setItem('theme', 'light');
+  } else {
+    html.setAttribute('data-theme', 'dark');
+    btn.textContent = '☀️';
+    localStorage.setItem('theme', 'dark');
+  }
+}
+function toggleLeft() {
+  const col = document.getElementById('leftCol');
+  col.style.display = col.style.display === 'none' ? 'block' : 'none';
+}
+(function() {
+  if (localStorage.getItem('theme') === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.getElementById('themeBtn').textContent = '☀️';
+  }
+})();
+</script>
+</body>
+</html>
