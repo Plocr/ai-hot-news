@@ -34,7 +34,12 @@ def load_feeds() -> list[dict[str, Any]]:
 
 
 def fetch_feed(feed_cfg: dict[str, Any]) -> list[dict[str, Any]]:
-    """抓取单个 RSS 源，返回条目列表。"""
+    """抓取单个源（RSS 或 HTML 页面），返回条目列表。"""
+    # HTML 页面 scraper 分发
+    if feed_cfg.get("type") == "html":
+        return fetch_html_feed(feed_cfg)
+
+    # 默认 RSS 抓取
     url = feed_cfg["url"]
     log.info("Fetching: %s (%s)", feed_cfg["name"], url)
 
@@ -171,6 +176,128 @@ def main():
 
     save_data(all_items)
 
+
+# ============================================================
+# HTML 页面抓取（用于无 RSS 的博客）
+# ============================================================
+
+def fetch_html_feed(feed_cfg: dict[str, Any]) -> list[dict[str, Any]]:
+    """根据 scraper 类型分发到对应的 HTML 抓取函数。"""
+    scraper = feed_cfg.get("scraper", "")
+    url = feed_cfg["url"]
+    log.info("Scraping: %s (%s)", feed_cfg["name"], url)
+
+    if scraper == "claude":
+        return scrape_claude_blog(feed_cfg)
+    elif scraper == "datalearner":
+        return scrape_datalearner(feed_cfg)
+    else:
+        log.warning("Unknown scraper: %s", scraper)
+        return []
+
+
+def scrape_claude_blog(cfg: dict) -> list[dict]:
+    """抓取 claude.com/blog 页面，提取文章列表。"""
+    import ssl
+    try:
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        from urllib.request import urlopen, Request
+        req = Request(cfg["url"], headers={"User-Agent": "Mozilla/5.0 (compatible; AI-Hot-News/1.0)"})
+        with urlopen(req, timeout=30, context=ctx) as r:
+            html = r.read().decode("utf-8", errors="replace")
+    except Exception as e:
+        log.warning("Failed to scrape Claude blog: %s", e)
+        return []
+    items = []
+
+    # 构建 slug -> url 映射
+    links_map = {}
+    for m in re.finditer(r'href="(/blog/[a-z0-9][^"?#]*)', html):
+        link = m.group(1)
+        slug = link.split("/blog/")[-1].split("/")[0]
+        if slug and slug not in links_map and slug != "category":
+            links_map[slug] = f"https://claude.com{link}"
+
+    # 从 data-cta-copy 提取标题，匹配最近的链接
+    for m in re.finditer(r'data-cta-copy="([^"]{10,200})"', html):
+        title = m.group(1).strip()
+        remaining = html[m.end():]
+        slug_m = re.search(r'href="(/blog/[a-z0-9][^"?#]*)', remaining)
+        if slug_m:
+            slug = slug_m.group(1).split("/blog/")[-1].split("/")[0]
+            if slug in links_map:
+                items.append({
+                    "id": hashlib.md5(links_map[slug].encode()).hexdigest()[:12],
+                    "url": links_map[slug],
+                    "summary": "",
+                    "source": cfg["name"],
+                    "source_id": cfg["id"],
+                    "category": cfg.get("category", "company"),
+                    "published": None,
+                    "timestamp": 0,
+                })
+
+    max_n = cfg.get("max_items", 0)
+    if max_n > 0:
+        items = items[:max_n]
+
+    log.info("  -> Scraped %d items from Claude Blog", len(items))
+    return items
+
+
+def scrape_datalearner(cfg: dict) -> list[dict]:
+    """抓取 datalearner.com/blog_list 页面。"""
+    try:
+        resp = httpx.get(
+            cfg["url"],
+            headers={"User-Agent": "Mozilla/5.0 (compatible; AI-Hot-News/1.0)"},
+            timeout=30,
+            follow_redirects=True,
+        )
+        resp.raise_for_status()
+    except Exception as e:
+        log.warning("Failed to scrape DataLearner: %s", e)
+        return []
+
+    html = resp.text
+    items = []
+
+    # 提取所有 /blog/<slug> 链接（去重）
+    seen = set()
+    links = []
+    for m in re.finditer(r'href="(/blog/[a-z0-9][^"?#]*)', html):
+        link = m.group(1)
+        slug = link.split("/blog/")[-1].split("/")[0]
+        if slug and slug not in seen:
+            seen.add(slug)
+            links.append(f"https://www.datalearner.com{link}")
+
+    # 提取所有 h2~h4 标题
+    titles = [m.group(1).strip() for m in re.finditer(r'<h[2-4][^>]*>([^<]{10,200})</h', html)]
+
+    # 按顺序配对（大部分 blog 页面标题和链接顺序一致）
+    for i, url in enumerate(links):
+        title = titles[i] if i < len(titles) else url.split("/")[-1].replace("-", " ").title()
+        items.append({
+            "id": hashlib.md5(url.encode()).hexdigest()[:12],
+            "title": title,
+            "url": url,
+            "summary": "",
+            "source": cfg["name"],
+            "source_id": cfg["id"],
+            "category": cfg.get("category", "industry"),
+            "published": None,
+            "timestamp": 0,
+        })
+
+    max_n = cfg.get("max_items", 0)
+    if max_n > 0:
+        items = items[:max_n]
+
+    log.info("  -> Scraped %d items from DataLearner", len(items))
+    return items
 
 # ============================================================
 # 平台热榜抓取（uapis.cn + X/Twitter）

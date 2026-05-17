@@ -129,6 +129,11 @@ COMPANY_CONFIG = OrderedDict([
         "color": "#6366f1",
         "keywords": ["mistral"],
     }),
+    ("小米", {
+        "icon": "📱",
+        "color": "#ff6900",
+        "keywords": ["xiaomi", "小米", "mimo"],
+    }),
 ])
 
 # ── 平台配色 ──
